@@ -14,13 +14,23 @@ jobs:
   clean-install:
     runs-on: windows-latest
     timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12', '3.13']
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
-          python-version: '3.12'
+          python-version: ${{ matrix.python }}
+      - name: Install the skill with Windows PowerShell 5.1
+        shell: powershell
+        run: |
+          $destination = Join-Path $env:RUNNER_TEMP 'codex-clean\skills\yingke-media'
+          ./tools/install-skill.ps1 -Destination $destination
+          if (-not (Test-Path -LiteralPath (Join-Path $destination 'SKILL.md'))) { throw 'Skill installation failed.' }
       - name: Install from scratch over the network
-        shell: pwsh
+        shell: powershell
         run: |
           $engine = Join-Path $env:RUNNER_TEMP 'yingke-clean-engine'
           ./tools/setup-engine.ps1 -EnginePath $engine -PythonPath (Get-Command python).Source
@@ -30,3 +40,19 @@ jobs:
           $engine = Join-Path $env:RUNNER_TEMP 'yingke-clean-engine'
           $testDirectory = Join-Path $env:RUNNER_TEMP 'yingke-smoke'
           ./tests/smoke-windows.ps1 -Engine $engine -TestDirectory $testDirectory
+      - name: Resume an interrupted installation without replacing user data
+        shell: powershell
+        run: |
+          $engine = Join-Path $env:RUNNER_TEMP 'yingke-clean-engine'
+          $marker = Join-Path $engine '.yingke-install-state.json'
+          $state = Get-Content -LiteralPath $marker -Raw -Encoding UTF8 | ConvertFrom-Json
+          if ($state.status -ne 'complete') { throw 'Fresh install did not reach complete state.' }
+          $state.status = 'incomplete'
+          [IO.File]::WriteAllText($marker,($state | ConvertTo-Json),[Text.UTF8Encoding]::new($false))
+          $sentinel = Join-Path $engine 'data\resume-check.txt'
+          [IO.File]::WriteAllText($sentinel,'preserve-me',[Text.UTF8Encoding]::new($false))
+          Remove-Item -LiteralPath (Join-Path $engine 'bin\yt-dlp.exe')
+          ./tools/setup-engine.ps1 -EnginePath $engine -PythonPath (Get-Command python).Source -Resume
+          if ([IO.File]::ReadAllText($sentinel) -ne 'preserve-me') { throw 'Resume changed user data.' }
+          $state = Get-Content -LiteralPath $marker -Raw -Encoding UTF8 | ConvertFrom-Json
+          if ($state.status -ne 'complete') { throw 'Resume did not reach complete state.' }
