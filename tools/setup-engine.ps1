@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$EnginePath = (Join-Path $env:LOCALAPPDATA 'YingkeMedia\engine'),
     [string]$PythonPath = 'python',
     [string]$FromPortableEngine = '',
