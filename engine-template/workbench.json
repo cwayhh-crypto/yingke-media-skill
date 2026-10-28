@@ -1,0 +1,7 @@
+{
+  "projectRoot": "apps",
+  "port": 48630,
+  "downloadPort": 48631,
+  "subtitlePort": 48632,
+  "portable": true
+}

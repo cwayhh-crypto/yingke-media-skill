@@ -1,0 +1,4 @@
+interface:
+  display_name: "映刻媒体与字幕"
+  short_description: "自动串联视频下载、音频与海报保存、时间轴字幕及说话人分离，支持任务续接。"
+  default_prompt: "使用 $yingke-media 检查引擎，通过 workflow 处理指定视频，核验产物并报告未完成步骤。"
