@@ -20,6 +20,11 @@ if ($FromPortableEngine) {
 }
 
 function Invoke-Checked([string]$Program, [string[]]$CommandArgs) {
+    # Windows PowerShell 5.1 strips embedded double quotes when invoking native
+    # programs; preserve them for Python -c snippets and other arguments.
+    if ($PSVersionTable.PSVersion.Major -lt 6) {
+        $CommandArgs = @($CommandArgs | ForEach-Object { $_ -replace '"', '\"' })
+    }
     & $Program @CommandArgs
     if ($LASTEXITCODE -ne 0) { throw "命令失败：$Program（退出码 $LASTEXITCODE）" }
 }
