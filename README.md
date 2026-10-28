@@ -91,3 +91,8 @@ $python = if (Test-Path "$engine\runtime\python\python.exe") { "$engine\runtime\
 ## 许可与第三方组件
 
 本仓库项目代码采用 [MIT License](LICENSE)；第三方项目和模型各自适用其许可证，来源见 [THIRD-PARTY.md](THIRD-PARTY.md)。安装脚本从上游获取这些组件，不将它们打包在源码仓库中。
+
+
+## 验证范围
+
+已在一台 Windows x64 电脑测试从现有便携引擎复制依赖、启动源码版引擎，并将测试语音导出为 SRT 和 TXT；原便携版曾成功下载一条抖音视频。全新联网安装尚未完成端到端验证：当前测试环境连接 Node.js 上游时中断。其他网站、登录流程和其他电脑的兼容性仍需验证。
