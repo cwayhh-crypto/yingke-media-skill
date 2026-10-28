@@ -54,7 +54,11 @@ cd yingke-media-skill
 powershell -ExecutionPolicy Bypass -File .\tools\install-skill.ps1
 ```
 
-也可通过 Codex 的 `$skill-installer` 安装仓库内的 `yingke-media` 目录。如果目标目录已有同名 Skill，脚本会停止而不覆盖。安装后开启新的一轮对话。
+也可以在 Codex 中说：
+
+> 使用 `$skill-installer` 安装 https://github.com/cwayhh-crypto/yingke-media-skill/tree/main/yingke-media
+
+如果目标目录已有同名 Skill，安装器会停止而不覆盖。安装后开启新的一轮对话，并继续下一步准备引擎。
 
 ### 3. 准备引擎
 
