@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+*.part
+data/
+downloads/
+imports/
+subtitles/
+models/
+runtime/
+bin/
+engine-path.txt
+*.log
+cookies*.txt
