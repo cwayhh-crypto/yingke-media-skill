@@ -29,6 +29,8 @@ function Invoke-Checked([string]$Program, [string[]]$CommandArgs) {
     if ($LASTEXITCODE -ne 0) { throw "命令失败：$Program（退出码 $LASTEXITCODE）" }
 }
 function Get-VerifiedFile([string]$Url, [string]$Destination, [string]$ExpectedHash) {
+    # The Windows PowerShell 5.1 progress renderer can slow large downloads dramatically.
+    $ProgressPreference = 'SilentlyContinue'
     if (Test-Path -LiteralPath $Destination) {
         if ((Get-FileHash -LiteralPath $Destination -Algorithm SHA256).Hash -ne $ExpectedHash) { throw "已有文件的 SHA256 不匹配，未覆盖：$Destination" }
         Write-Host "复用已校验文件：$(Split-Path -Leaf $Destination)"
