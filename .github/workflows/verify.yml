@@ -1,0 +1,31 @@
+name: Verify repository
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Expand initial source archive
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          if [ -f yingke-media-upload.zip ]; then
+            echo "9f5c3881eec19b28040d15835d88416399352f84c97873eaf2741a83dc2ce1f6  yingke-media-upload.zip" | sha256sum -c -
+            python -m zipfile -e yingke-media-upload.zip .
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git rm yingke-media-upload.zip
+            git add -A
+            git diff --cached --quiet || git commit -m "Publish skill and engine sources"
+            git push origin HEAD:main
+          fi
+      - name: Validate source syntax
+        run: |
+          test -f yingke-media/SKILL.md
+          python -m compileall -q yingke-media engine-template
+          find engine-template yingke-media -name "*.mjs" -print0 | xargs -0 -n 1 node --check
