@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'tools/setup-engine.ps1'
+      - 'tools/install-skill.ps1'
       - 'engine-template/**'
       - 'yingke-media/**'
       - 'tests/smoke-windows.ps1'
@@ -11,6 +12,27 @@ on:
 permissions:
   contents: read
 jobs:
+  codex-skill-installer:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the official skill installer
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          repository: openai/skills
+          ref: 49f948faa9258a0c61caceaf225e179651397431
+          path: openai-skills
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+      - name: Install this public skill from GitHub
+        shell: powershell
+        run: |
+          $destination = Join-Path $env:RUNNER_TEMP 'codex-official-installer'
+          python ./openai-skills/skills/.system/skill-installer/scripts/install-skill-from-github.py --repo cwayhh-crypto/yingke-media-skill --path yingke-media --dest $destination
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if (-not (Test-Path -LiteralPath (Join-Path $destination 'yingke-media\SKILL.md'))) { throw 'Official skill installer did not install SKILL.md.' }
   clean-install:
     runs-on: windows-latest
     timeout-minutes: 35
