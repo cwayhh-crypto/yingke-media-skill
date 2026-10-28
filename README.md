@@ -130,4 +130,4 @@ $python = if (Test-Path "$engine\runtime\python\python.exe") { "$engine\runtime\
 
 ## 验证范围
 
-已在 GitHub 托管的干净 Windows 环境中，使用 Python 3.12 完成全新联网安装，并通过本地 HTTP 视频的下载、音频和封面收录、语音识别、说话人分组与五种字幕格式的端到端测试。另在一台 Windows x64 电脑测试过从便携引擎复制依赖，并成功下载过一条抖音公开视频。其他平台和登录流程仍需逐站验证。
+已在 GitHub 托管的干净 Windows 环境中，验证官方 Codex Skill 安装器，以及使用 Windows PowerShell 5.1 和 Python 3.12、3.13 全新联网安装引擎。两种 Python 版本均通过本地 HTTP 视频下载、音频和封面收录、语音识别、说话人分组及五种字幕格式的端到端测试，并通过模拟中断后的续装与用户数据保留测试。另在一台 Windows x64 电脑测试过从便携引擎复制依赖，并成功下载过一条抖音公开视频。其他平台和登录流程仍需逐站验证。
